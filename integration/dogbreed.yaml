@@ -1,0 +1,72 @@
+openapi: 3.0.0
+info:
+  title: Dog API
+  description: A public API providing a list of all dog breeds.
+  version: 1.0.0
+servers:
+  - url: https://dog.ceo/api
+    description: Dog CEO API Server
+paths:
+  /breeds/list/all:
+    get:
+      description: A public API providing a list of all dog breeds.
+      summary: Get a list of all dog breeds
+      operationId: getAllBreeds
+      tags:
+        - Breeds
+      responses:
+        '200':
+          description: A list of all breeds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+                    description: A key-value list of breeds and their sub-breeds (if any).
+                  status:
+                    type: string
+                    description: The status of the response (should be "success").
+              example:
+                message:
+                  affenpinscher: []
+                  african: []
+                  airedale: []
+                  akita: []
+                  beagle: []
+                  retriever:
+                    - golden
+                    - labrador
+                status: success
+        '500':
+          description: Server error
+components:
+  schemas:
+    BreedListResponse:
+      type: object
+      properties:
+        message:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          description: A list of breeds and sub-breeds
+        status:
+          type: string
+          description: The status of the response
+      example:
+        message:
+          affenpinscher: []
+          african: []
+          airedale: []
+          akita: []
+        status: success
+tags:
+  - name: Breeds
+    description: Operations related to dog breeds
