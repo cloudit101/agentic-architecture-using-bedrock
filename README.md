@@ -58,8 +58,8 @@ Users make requests through the GUI, which are handled by the corresponding agen
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/wchemz/AgenticDemo.git
-   cd AgenticDemo
+   git clone https://github.com/aws-samples/agentic-architecture-using-bedrock.git
+   cd agentic-architecture-using-bedrock
    ```
 
 2. **Set up the Database**:
