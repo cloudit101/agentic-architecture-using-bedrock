@@ -22,14 +22,34 @@ Parameters:
     Description: Assets bucket prefix
     Type: String
     Default: 4b5336de-e5b8-4b90-b1d8-dec31125cd95
-  SQLLoaderLambdaSrc:
-    Description: Lambda package
-    Type: String
-    Default: lambda_package.zip
   Psycopg2:
     Description: psycopg2 layer
     Type: String
     Default: psycopg2.zip
+  SQLLoaderLambdaSrc:
+    Description: Lambda package
+    Type: String
+    Default: lambda_package.zip
+  OrchestratorKBActionLambdaSrc:
+    Description: Lambda package
+    Type: String
+    Default: OrchestratorKBActionLambda.zip
+  OrchestratorAPIActionLambdaSrc:
+    Description: Lambda package
+    Type: String
+    Default: OrchestratorAPIActionLambda.zip
+  OrchestratorDBActionLambdaSrc:
+    Description: Lambda package
+    Type: String
+    Default: OrchestratorDBActionLambda.zip
+  RestAPIActionLambdaSrc:
+    Description: Lambda package
+    Type: String
+    Default: RestAPIActionLambda.zip
+  DatabaseActionLambdaSrc:
+    Description: Lambda package
+    Type: String
+    Default: DatabaseActionLambda.zip
 
 Resources:
   VPC:
@@ -346,6 +366,108 @@ Resources:
         - x86_64
       LicenseInfo: "PostgreSQL License"
 
+  DatabaseActionLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${EnvironmentName}-database-action"
+      Description: "Lambda function to perform database actions on the petstore database"
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref MyAssetsBucketName
+        S3Key: !Sub "${MyAssetsBucketPrefix}/lambda/${DatabaseActionLambdaSrc}"
+      Layers:
+        - !Ref Psycopg2Layer
+      MemorySize: 512
+      Timeout: 300
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref ApplicationSecurityGroup
+        SubnetIds:
+          - !Ref PublicSubnet1
+          - !Ref PublicSubnet2
+      Environment:
+        Variables:
+          DB_HOST: !GetAtt RDSCluster.Endpoint.Address
+          DB_PORT: "5432"
+          DB_USER: !Ref DBUsername
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: "petstore"
+          QUERY_CORRECTION_AGENT_ID: 'QUERY_CORRECTION_AGENT_ID'
+  
+  # OrchestratorKBAction Lambda Function
+  OrchestratorKBActionLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${EnvironmentName}-orchestrator-kb-action"
+      Description: Lambda function to handle knowledge base actions
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref MyAssetsBucketName
+        S3Key: !Sub "${MyAssetsBucketPrefix}/lambda/OrchestratorKBActionLambda.zip"
+      MemorySize: 256
+      Timeout: 180
+      Environment:
+        Variables:
+          AGENT_ID: 'KB_AGENTID'
+          AGENT_ALIAS_ID: 'TSTALIASID'
+
+  # OrchestratorAPIAction Lambda Function
+  OrchestratorAPIActionLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${EnvironmentName}-orchestrator-api-action"
+      Description: Lambda function to handle API actions
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref MyAssetsBucketName
+        S3Key: !Sub "${MyAssetsBucketPrefix}/lambda/OrchestratorAPIActionLambda.zip"
+      MemorySize: 256
+      Timeout: 180
+      Environment:
+        Variables:
+          AGENT_ID: 'REST_API_AGENT_ID'
+          AGENT_ALIAS_ID: 'TSTALIASID'
+
+  # OrchestratorDBAction Lambda Function
+  OrchestratorDBActionLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${EnvironmentName}-orchestrator-db-action"
+      Description: Lambda function to handle database actions
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref MyAssetsBucketName
+        S3Key: !Sub "${MyAssetsBucketPrefix}/lambda/OrchestratorDBActionLambda.zip"
+      MemorySize: 256
+      Timeout: 180
+      Environment:
+        Variables:
+          AGENT_ID: 'QUERY_GENERATION_AGENT_ID'
+          AGENT_ALIAS_ID: 'TSTALIASID'
+  
+  # RestAPIAction Lambda Function
+  RestAPIActionLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${EnvironmentName}-rest-api-action"
+      Description: Lambda function to handle REST API actions
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.11
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref MyAssetsBucketName
+        S3Key: !Sub "${MyAssetsBucketPrefix}/lambda/RestAPIActionLambda.zip"
+      MemorySize: 512
+      Timeout: 300
+
 Outputs:
   VPCID:
     Description: The ID of the created VPC
@@ -404,3 +526,33 @@ Outputs:
     Value: !Ref PetStoreDBKBBucket
     Export:
       Name: !Sub "${EnvironmentName}-PetStoreDBKBBucket"
+
+  DatabaseActionLambdaArn:
+    Description: ARN of the DatabaseAction Lambda function
+    Value: !GetAtt DatabaseActionLambda.Arn
+    Export:
+      Name: !Sub "${EnvironmentName}-DatabaseActionLambdaArn"
+
+  OrchestratorKBActionLambdaArn:
+    Description: ARN of the OrchestratorKBAction Lambda function
+    Value: !GetAtt OrchestratorKBActionLambda.Arn
+    Export:
+      Name: !Sub "${EnvironmentName}-OrchestratorKBActionLambdaArn"
+
+  OrchestratorAPIActionLambdaArn:
+    Description: ARN of the OrchestratorAPIAction Lambda function
+    Value: !GetAtt OrchestratorAPIActionLambda.Arn
+    Export:
+      Name: !Sub "${EnvironmentName}-OrchestratorAPIActionLambdaArn"
+
+  OrchestratorDBActionLambdaArn:
+    Description: ARN of the OrchestratorDBAction Lambda function
+    Value: !GetAtt OrchestratorDBActionLambda.Arn
+    Export:
+      Name: !Sub "${EnvironmentName}-OrchestratorDBActionLambdaArn"
+
+  RestAPIActionLambdaArn:
+    Description: ARN of the RestAPIAction Lambda function
+    Value: !GetAtt RestAPIActionLambda.Arn
+    Export:
+      Name: !Sub "${EnvironmentName}-RestAPIActionLambdaArn"

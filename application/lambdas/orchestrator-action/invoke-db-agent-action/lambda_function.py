@@ -2,6 +2,7 @@ import json
 import boto3
 import logging
 import uuid
+import os
 from botocore.exceptions import ClientError
 
 # Set up logging
@@ -23,7 +24,8 @@ def lambda_handler(event, context):
             "statusCode": 400,
             "body": json.dumps({"error": f"Missing key in event: {e}"})
         }
-    
+    agent_id = os.environ.get('AGENT_ID', 'DFQWOIRKJW')
+    agent_alias_id = os.environ.get('AGENT_ALIAS_ID', 'TSTALIASID')
     try:
         input_text = next((param['value'] for param in parameters if param['name'] == 'input_text'), None)
         # Generate a unique session ID
@@ -35,8 +37,8 @@ def lambda_handler(event, context):
         agent_response = bedrock_agent_runtime_client.invoke_agent(
             sessionId=session_id,
             inputText=input_text,
-            agentId='ZB2Z51BITH',
-            agentAliasId='TSTALIASID'
+            agentId=agent_id,
+            agentAliasId=agent_alias_id
         )
         
         logger.info(f"Agent response: {json.dumps(agent_response, default=str)}")
