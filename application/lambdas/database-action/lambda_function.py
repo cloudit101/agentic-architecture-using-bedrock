@@ -57,6 +57,9 @@ def lambda_handler(event, context):
     rds_port = os.environ.get('RDS_PORT', '5432')
     rds_username = os.environ.get('RDS_USERNAME', 'postgres')
     rds_password = os.environ.get('RDS_PASSWORD', 'petstoremaster')
+
+    # Fetch Query Correction AgentID from environment variables
+    query_correction_agent_id = os.environ.get('QUERY_CORRECTION_AGENT_ID', '')
     
     # Initialize Bedrock Agent Runtime client
     # bedrock_agent_runtime_client = boto3.client('bedrock-agent-runtime')
@@ -139,7 +142,7 @@ def lambda_handler(event, context):
                     sessionId=session_id,
                     inputText=json.dumps(correctionInputText),
                     # inputText=correctionInputText,
-                    agentId='R77GGNZXV2',
+                    agentId=query_correction_agent_id,
                     agentAliasId='TSTALIASID'
                 )
                 
