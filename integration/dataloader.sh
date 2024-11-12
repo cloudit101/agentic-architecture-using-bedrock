@@ -34,6 +34,21 @@ echo "Connecting to database at $DB_ENDPOINT:$DB_PORT with user $DB_USER..."
 echo "Downloading DDL file and creating tables..."
 curl -o ddl.sql "$DDL_URL"
 
+# Drop the petstore database if it exists
+echo "Dropping the petstore database if it exists..."
+PGPASSWORD="$DB_PASSWORD" psql -U "$DB_USER" -h "$DB_ENDPOINT" -d "$DB_NAME" -c "DROP DATABASE IF EXISTS petstore;"
+
+# Create the petstore database
+echo "Creating the petstore database..."
+PGPASSWORD="$DB_PASSWORD" psql -U "$DB_USER" -h "$DB_ENDPOINT" -d "$DB_NAME" -c "CREATE DATABASE petstore;"
+
+# Add a comment to the petstore database
+echo "Adding a comment to the petstore database..."
+PGPASSWORD="$DB_PASSWORD" psql -U "$DB_USER" -h "$DB_ENDPOINT" -d "$DB_NAME" -c "COMMENT ON DATABASE petstore IS 'This database is used for managing the Petstore application data, including pets, users, orders, and other related entities.';"
+
+# Update the target database after it's been created
+export DB_NAME="petstore"
+
 PGPASSWORD=$DB_PASSWORD psql --host="$DB_ENDPOINT" --port="$DB_PORT" --username="$DB_USER" --dbname="$DB_NAME" -f ddl.sql
 if [[ $? -ne 0 ]]; then
   echo "Error executing DDL script."
@@ -43,9 +58,6 @@ fi
 # Download data.sql file from S3 and execute it on the database
 echo "Downloading data file and inserting data..."
 curl -o data.sql "$DATA_URL"
-
-# Update the target database after it's been created
-export DB_NAME="petstore"
 
 PGPASSWORD=$DB_PASSWORD psql --host="$DB_ENDPOINT" --port="$DB_PORT" --username="$DB_USER" --dbname="$DB_NAME" -f data.sql
 if [[ $? -ne 0 ]]; then
