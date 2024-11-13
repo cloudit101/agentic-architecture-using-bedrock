@@ -1,7 +1,13 @@
 #!/bin/bash
 
+
+# Get the stack information for the stack with the specific description
+STACK_DETAILS=$(aws cloudformation describe-stacks --query "Stacks[*]" --output json | jq -r '.[] | select(.Description == "Agentic AI with Bedrock Agents workshop")')
+
+# Extract the stack name from the stack details
+export STACK_NAME=$(echo "$STACK_DETAILS" | jq -r '.StackName')
+
 # Set variables for CloudFormation stack name and S3 URLs
-export STACK_NAME="Agentic-Architecture-Stack"
 export DDL_URL="https://ws-assets-prod-iad-r-pdx-f3b3f9f1a7d6a3d0.s3.us-west-2.amazonaws.com/4b5336de-e5b8-4b90-b1d8-dec31125cd95/ddl.sql"
 export DATA_URL="https://ws-assets-prod-iad-r-pdx-f3b3f9f1a7d6a3d0.s3.us-west-2.amazonaws.com/4b5336de-e5b8-4b90-b1d8-dec31125cd95/data.sql"
 export QA_URL="https://ws-assets-prod-iad-r-pdx-f3b3f9f1a7d6a3d0.s3.us-west-2.amazonaws.com/4b5336de-e5b8-4b90-b1d8-dec31125cd95/Pet_Store_QnA_data.csv"
