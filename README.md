@@ -1,7 +1,7 @@
 
 # Agentic AI with Bedrock Agents
 
-This repository demonstrates the architecture and implementation of an agent-based AI system using AWS Bedrock Agents and the Claude model. The architecture leverages AWS Lambda, S3, and RDS, and uses a variety of agents (Database Agent, API Agent, KB Agent) to provide an interactive and functional AI-driven experience. The architecture is depicted in the image `AgenticDemo.png`.
+This repository demonstrates the architecture and implementation of an agent-based AI system using AWS Bedrock Agents and the Claude model. The architecture leverages AWS Lambda, S3, OpenSearch and RDS, and uses a variety of agents (Database Agent, API Agent, KB Agent) to provide an interactive and functional AI-driven experience.
 
 ## Architecture Overview
 

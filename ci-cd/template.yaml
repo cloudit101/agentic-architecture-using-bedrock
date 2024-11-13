@@ -360,6 +360,104 @@ Resources:
                   - bedrock:*
                 Resource: "*"
 
+  AmazonBedrockExecutionRoleForAgents:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: AmazonBedrockExecutionRoleForAgents
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "AmazonBedrockAgentBedrockFoundationModelPolicyProd"
+            Effect: Allow
+            Principal:
+              Service: bedrock.amazonaws.com
+            Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Sub "${AWS::AccountId}"
+              ArnLike:
+                aws:SourceArn: !Sub "arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:agent/*"
+      Policies:
+        - PolicyName: AmazonBedrockAgentBedrockFoundationModelPolicyProd
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: "AmazonBedrockAgentBedrockFoundationModelPolicyProd"
+                Effect: Allow
+                Action: "bedrock:InvokeModel"
+                Resource:
+                  - "arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-3-haiku-20240307-v1:0"
+        - PolicyName: AmazonBedrockAgentRetrieveFromKB
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: "AmazonBedrockAgentRetrieveFromKBPolicy"
+                Effect: Allow
+                Action: "bedrock:Retrieve"
+                Resource: "*"
+        - PolicyName: AllowInvokeLambdas
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: "lambda:InvokeFunction"
+                Resource:
+                  - !GetAtt DatabaseActionLambda.Arn
+                  - !GetAtt OrchestratorKBActionLambda.Arn
+                  - !GetAtt OrchestratorAPIActionLambda.Arn
+                  - !GetAtt OrchestratorDBActionLambda.Arn
+                  - !GetAtt RestAPIActionLambda.Arn
+
+  # Lambda permission for DatabaseActionLambda
+  DatabaseActionLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref DatabaseActionLambda
+      Principal: "bedrock.amazonaws.com"
+      SourceArn: !Sub "arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:agent/*"
+      SourceAccount: !Sub "${AWS::AccountId}"
+
+  # Lambda permission for OrchestratorKBActionLambda
+  OrchestratorKBActionLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref OrchestratorKBActionLambda
+      Principal: "bedrock.amazonaws.com"
+      SourceArn: !Sub "arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:agent/*"
+      SourceAccount: !Sub "${AWS::AccountId}"
+
+  # Lambda permission for OrchestratorAPIActionLambda
+  OrchestratorAPIActionLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref OrchestratorAPIActionLambda
+      Principal: "bedrock.amazonaws.com"
+      SourceArn: !Sub "arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:agent/*"
+      SourceAccount: !Sub "${AWS::AccountId}"
+
+  # Lambda permission for OrchestratorDBActionLambda
+  OrchestratorDBActionLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref OrchestratorDBActionLambda
+      Principal: "bedrock.amazonaws.com"
+      SourceArn: !Sub "arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:agent/*"
+      SourceAccount: !Sub "${AWS::AccountId}"
+
+  # Lambda permission for RestAPIActionLambda
+  RestAPIActionLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref RestAPIActionLambda
+      Principal: "bedrock.amazonaws.com"
+      SourceArn: !Sub "arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:agent/*"
+      SourceAccount: !Sub "${AWS::AccountId}"
+
   Psycopg2Layer:
     Type: AWS::Lambda::LayerVersion
     Properties:
@@ -564,3 +662,9 @@ Outputs:
     Value: !GetAtt RestAPIActionLambda.Arn
     Export:
       Name: !Sub "${EnvironmentName}-RestAPIActionLambdaArn"
+
+  AmazonBedrockExecutionRoleForAgentsArn:
+    Description: ARN of the AmazonBedrockExecutionRoleForAgents IAM role
+    Value: !GetAtt AmazonBedrockExecutionRoleForAgents.Arn
+    Export:
+      Name: !Sub "${EnvironmentName}-AmazonBedrockExecutionRoleForAgentsArn"

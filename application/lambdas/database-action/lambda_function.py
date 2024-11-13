@@ -52,11 +52,11 @@ def lambda_handler(event, context):
         }
     
     # Fetch PostgreSQL connection details from environment variables
-    rds_host = os.environ.get('RDS_HOST', 'petstore-instance-1.c7icaemqq3d4.us-east-1.rds.amazonaws.com')
-    rds_db = os.environ.get('RDS_DB', 'petstore')
-    rds_port = os.environ.get('RDS_PORT', '5432')
-    rds_username = os.environ.get('RDS_USERNAME', 'postgres')
-    rds_password = os.environ.get('RDS_PASSWORD', 'petstoremaster')
+    rds_host = os.environ.get('DB_HOST', 'petstore-instance-1.c7icaemqq3d4.us-east-1.rds.amazonaws.com')
+    rds_db = os.environ.get('DB_NAME', 'petstore')
+    rds_port = os.environ.get('DB_PORT', '5432')
+    rds_username = os.environ.get('DB_USER', 'postgres')
+    rds_password = os.environ.get('DB_PASSWORD', 'petstoremaster')
 
     # Fetch Query Correction AgentID from environment variables
     query_correction_agent_id = os.environ.get('QUERY_CORRECTION_AGENT_ID', '')
