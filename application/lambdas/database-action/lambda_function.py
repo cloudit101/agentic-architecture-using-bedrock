@@ -45,7 +45,7 @@ def lambda_handler(event, context):
         logger.info("User question: %s", user_question)
         
     if not user_question:
-        logger.error("User question found in parameters")
+        logger.error("User question not found in parameters")
         return {
             "statusCode": 400,
             "body": json.dumps({"error": "No User question found in parameters"})
