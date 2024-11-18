@@ -22,6 +22,14 @@ Parameters:
     Description: Assets bucket prefix
     Type: String
     Default: 4b5336de-e5b8-4b90-b1d8-dec31125cd95
+  KeyPair:
+    Description: SSH Keypair name
+    Type: String
+    Default: ws-default-keypair
+  InstanceType:
+    Description: EC2 instance type
+    Type: String
+    Default: t3.medium
   Psycopg2:
     Description: psycopg2 layer
     Type: String
@@ -50,6 +58,11 @@ Parameters:
     Description: Lambda package
     Type: String
     Default: DatabaseActionLambda.zip
+
+Mappings:
+  RegionMap:
+    us-west-2:
+      AL2023AMI: ami-046b5b8111c19b3ac
 
 Resources:
   VPC:
@@ -239,6 +252,10 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourcePrefixListId: pl-047d464325e7bf465
       SecurityGroupEgress:
         - IpProtocol: -1
           FromPort: -1
@@ -273,6 +290,94 @@ Resources:
       SubnetIds:
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
+  
+  BastionHostRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "ec2.amazonaws.com"
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/PowerUserAccess
+
+  BastionHostInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles: 
+        - !Ref BastionHostRole
+
+  BastionHost:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap 
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - AL2023AMI
+      IamInstanceProfile: !Ref BastionHostInstanceProfile
+      InstanceType: t3.micro
+      KeyName: !Ref KeyPair
+      SubnetId: !Ref PublicSubnet1
+      SecurityGroupIds: 
+        - !Ref ApplicationSecurityGroup
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 20
+            VolumeType: gp3
+            DeleteOnTermination: true
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          # Update system packages
+          sudo yum update -y
+
+          # Install PostgreSQL, Git, and Development Tools
+          sudo yum install -y postgresql15
+          sudo yum install -y git
+          sudo yum groupinstall -y "Development Tools"
+          sudo yum install -y openssl-devel bzip2-devel libffi-devel xz-devel
+
+          # Download and compile Python 3.12
+          cd /opt
+          sudo wget https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz
+          sudo tar xzf Python-3.12.0.tgz
+          cd Python-3.12.0
+          sudo ./configure --enable-optimizations
+          sudo make altinstall
+
+          # Add Python and pip to PATH
+          echo "export PATH=\$PATH:/usr/local/bin" | sudo tee -a /etc/profile.d/python.sh
+
+          # Install pip for Python 3.12
+          cd /opt
+          sudo wget https://bootstrap.pypa.io/get-pip.py
+          sudo /usr/local/bin/python3.12 get-pip.py
+
+          # Verify pip installation
+          /usr/local/bin/pip3.12 --version
+          
+          # Create symbolic links for python and pip to point to python3.12 and pip3.12
+          sudo ln -s /usr/local/bin/python3.12 /usr/local/bin/python
+          sudo ln -s /usr/local/bin/pip3.12 /usr/local/bin/pip
+
+          pip install --upgrade pip
+
+          # Install Streamlit using pip for Python 3.12
+          pip install streamlit
+
+          sudo alternatives --install /usr/bin/python python /usr/local/bin/python3.12 1
+
+          # Download dataloader.sh to ec2-user's home directory
+          cd /home/ec2-user
+          sudo wget https://ws-assets-prod-iad-r-pdx-f3b3f9f1a7d6a3d0.s3.us-west-2.amazonaws.com/4b5336de-e5b8-4b90-b1d8-dec31125cd95/dataloader.sh
+          sudo chmod +x dataloader.sh
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-BastionHost
 
   PetStoreQAKBBucket:
     Type: AWS::S3::Bucket
@@ -668,3 +773,15 @@ Outputs:
     Value: !GetAtt AmazonBedrockExecutionRoleForAgents.Arn
     Export:
       Name: !Sub "${EnvironmentName}-AmazonBedrockExecutionRoleForAgentsArn"
+  
+  BastionHostPublicIP:
+    Description: Public IP address of the Bastion Host
+    Value: !GetAtt BastionHost.PublicIp
+    Export:
+      Name: !Sub ${EnvironmentName}-BastionHostPublicIP
+
+  BastionHostPublicDNS:
+    Description: Public DNS name of the Bastion Host
+    Value: !GetAtt BastionHost.PublicDnsName
+    Export:
+      Name: !Sub ${EnvironmentName}-BastionHostPublicDNS

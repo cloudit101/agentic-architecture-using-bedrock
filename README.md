@@ -78,7 +78,13 @@ Users make requests through the GUI, which are handled by the corresponding agen
    git clone https://github.com/aws-samples/agentic-architecture-using-bedrock.git
    cd agentic-architecture-using-bedrock
 
-   deploy cloudformation using template.yaml
+   # deploy cloudformation using template.yaml
+   cd ci-cd
+   aws cloudformation deploy \
+    --template-file ./template.yaml \
+    --stack-name Agentic-Architecture-Stack \
+    --capabilities CAPABILITY_NAMED_IAM \
+    --region us-west-2
    ```
 
 2. **Set up the Database and knowledge base**:

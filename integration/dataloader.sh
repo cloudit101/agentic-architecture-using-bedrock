@@ -1,5 +1,25 @@
 #!/bin/bash
 
+sudo yum update -y
+sudo yum install -y postgresql15
+sudo yum install -y git
+
+# Install dependencies
+sudo yum groupinstall -y "Development Tools"
+sudo yum install -y openssl-devel bzip2-devel libffi-devel xz-devel
+
+# Download and compile Python 3.12
+cd /opt
+sudo wget https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz
+sudo tar xzf Python-3.12.0.tgz
+cd Python-3.12.0
+sudo ./configure --enable-optimizations
+sudo make altinstall
+
+# Verify the installation
+python3.12 --version
+
+git clone https://github.com/aws-samples/agentic-architecture-using-bedrock.git
 
 # Get the stack information for the stack with the specific description
 STACK_DETAILS=$(aws cloudformation describe-stacks --query "Stacks[*]" --output json | jq -r '.[] | select(.Description == "Agentic AI with Bedrock Agents workshop")')

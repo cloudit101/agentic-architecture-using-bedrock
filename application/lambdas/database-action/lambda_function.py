@@ -136,7 +136,9 @@ def lambda_handler(event, context):
                 # Define additional parameters for the agent invocation
                 enable_trace = False  # Set as needed
                 end_session = False    # Set as needed
-        
+
+                # add query_correction_agent_id in the logger:
+                logger.info("Invoke the Bedrock Query correctoin Agent to get a corrected SQL query, agent id is : %s", query_correction_agent_id)
                 # Invoke the Bedrock Agent to get a corrected SQL query
                 agent_response = bedrock_agent_runtime_client.invoke_agent(
                     sessionId=session_id,
