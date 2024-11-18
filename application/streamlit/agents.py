@@ -15,8 +15,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Set up AWS clients
-region = 'us-east-1'
-session = boto3.Session(region_name=region, profile_name='AdministratorAccess-920373030336')
+region = 'us-west-2'
+session = boto3.Session(region_name=region)
 lambda_client = session.client('lambda')
 bedrock_agent_runtime_client = session.client('bedrock-agent-runtime')
 

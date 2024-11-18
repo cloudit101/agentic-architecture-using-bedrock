@@ -91,10 +91,10 @@ Users make requests through the GUI, which are handled by the corresponding agen
    - run dataloader.sh from Cloudshell from the private subnet
 
 3. **Set up the Streamlit App**:
-   - The `apps/streamlit/` folder contains the Streamlit application that serves the GUI for user interaction.
+   - The `application/streamlit/` folder contains the Streamlit application that serves the GUI for user interaction.
    - Run the app locally using:
      ```bash
-     python -m streamlit run apps/streamlit/agents.py
+     python -m streamlit run application/streamlit/agents.py
      ```
 
 ## Usage
