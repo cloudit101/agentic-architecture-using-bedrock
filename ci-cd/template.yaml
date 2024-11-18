@@ -336,7 +336,7 @@ Resources:
           sudo yum update -y
 
           # Install PostgreSQL, Git, and Development Tools
-          sudo yum install -y postgresql15
+          sudo yum install -y postgresql16
           sudo yum install -y git
           sudo yum groupinstall -y "Development Tools"
           sudo yum install -y openssl-devel bzip2-devel libffi-devel xz-devel
@@ -367,7 +367,7 @@ Resources:
           pip install --upgrade pip
 
           # Install Streamlit using pip for Python 3.12
-          pip install streamlit
+          pip install boto3 streamlit
 
           sudo alternatives --install /usr/bin/python python /usr/local/bin/python3.12 1
 
