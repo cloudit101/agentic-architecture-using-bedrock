@@ -83,7 +83,7 @@ def main():
     st.markdown("<h3 style='text-align: center;'>by Amazon Bedrock Agents</h3>", unsafe_allow_html=True)
 
     # Supervisor Text
-    st.markdown('<div class="supervisor-text">Supervisor Agent:</div>', unsafe_allow_html=True)
+    st.markdown('<div class="supervisor-text">Orchestrator Agent:</div>', unsafe_allow_html=True)
 
     # Chat Input Container
     with st.container():
@@ -113,7 +113,7 @@ def main():
     st.markdown(
         """
         <div class="footer">
-            For inquiries, contact <a href="mailto:wchemz@amazon.com">wchemz@amazon.com</a>, <a href="mailto:lavrekha@amazon.com">lavrekha@amazon.com</a>, <a href="mailto:vsabhar@amazon.com">vsabhar@amazon.com</a>
+            For inquiries, contact <a href="mailto:wchemz@amazon.com">wchemz@amazon.com</a>
         </div>
         """,
         unsafe_allow_html=True
