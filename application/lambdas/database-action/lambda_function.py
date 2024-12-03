@@ -64,7 +64,7 @@ def lambda_handler(event, context):
     # Initialize Bedrock Agent Runtime client
     # bedrock_agent_runtime_client = boto3.client('bedrock-agent-runtime')
     bedrock_agent_runtime_client=boto3.client(
-            service_name="bedrock-agent-runtime", region_name='us-east-1'
+            service_name="bedrock-agent-runtime", region_name='us-west-2'
         )
     logger.info("bedrock_agent_runtime_client: %s", bedrock_agent_runtime_client)
     
