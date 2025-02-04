@@ -73,12 +73,25 @@ Users make requests through the GUI, which are handled by the corresponding agen
 
 ## Setup Instructions
 
-1. **Clone the Repository**:
+1. **Create a bucket for the Lambda assets
+
+In your AWS S3 console, create a bucket for your Lambda code artifacts. You can name it, for example,my-lambda-assets-<your-aws-account-no>
+
+2.  **Clone the Repository**:
    ```bash
    git clone https://github.com/aws-samples/agentic-architecture-using-bedrock.git
    cd agentic-architecture-using-bedrock
+   ```
 
-   # deploy cloudformation using template.yaml
+3. **Edit the ci-cd/template.yaml Cloudformation template file and update the _MyAssetsBucketName_ parameter with your bucket name above. Replace the _KeyPair_ parameter with your EC2 keypair name. 
+
+4. **Upload the Lambda code assets to the S3 bucket you created above by running the script below. 
+   ```
+   cd application/lambdas
+   ./upload_lambdas.sh my-lambda-assets-<your-aws-account-no>
+
+5. **Deploy the cloudformation template.yaml file
+   ```bash
    cd ci-cd
    aws cloudformation deploy \
     --template-file ./template.yaml \
@@ -87,10 +100,10 @@ Users make requests through the GUI, which are handled by the corresponding agen
     --region us-west-2
    ```
 
-2. **Set up the Database and knowledge base**:
+6. **Set up the Database and knowledge base**:
    - run dataloader.sh from Cloudshell from the private subnet
 
-3. **Set up the Streamlit App**:
+7. **Set up the Streamlit App**:
    - The `application/streamlit/` folder contains the Streamlit application that serves the GUI for user interaction.
    - Run the app locally using:
      ```bash
