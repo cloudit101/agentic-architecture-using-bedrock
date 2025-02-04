@@ -1,7 +1,10 @@
 
 # Agentic Architecture using Bedrock Agents
 
-This repository demonstrates the architecture and implementation of an agent-based AI system using AWS Bedrock Agents and the Bedrock large language model. The architecture leverages Amazon Bedrock, Knowledge base, AWS Lambda, S3, OpenSearch and Aurora RDS database, and uses a variety of agents (Database Agent, API Agent, KB Agent) to provide an interactive and functional AI-driven experience.
+Use this repository to deploy what you need to start the [Agentic AI with Amazon Bedrock Workshop](ihttps://catalog.us-east-1.prod.workshops.aws/workshops/4b5336de-e5b8-4b90-b1d8-dec31125cd95/en-US)
+
+The workshop uses Amazon Bedrock Agents to build an application that can automate workflows and provide customer service for a retail pet store. The architecture leverages Amazon Bedrock Knowledge bases, AWS Lambda, 
+S3, OpenSearch and Aurora RDS database. The agents can perform tasks given instructions in natural language, such as making database updates (text-to-sql) and answering questions from a knowledge base.
 
 ## Architecture Overview
 
@@ -103,12 +106,8 @@ In your AWS S3 console, create a bucket for your Lambda code artifacts. You can 
 6. Set up the Database and knowledge base:
    - Run `dataloader.sh` from Cloudshell from the private subnet
 
-7. Set up the Streamlit App:
-   - The `application/streamlit/` folder contains the Streamlit application that serves the GUI for user interaction.
-   - Run the app locally using:
-     ```bash
-     python -m streamlit run application/streamlit/agents.py
-     ```
+
+7. Start the workshop at [Creating the Knowledge Base](https://catalog.us-east-1.prod.workshops.aws/workshops/4b5336de-e5b8-4b90-b1d8-dec31125cd95/en-US/40-knowledgebase) to create the Bedrock Knowledge Base and agents.
 
 ## Usage
 Once the system is set up, users can interact with the agents via the streamlit GUI. Queries are processed and sent to the appropriate agent for resolution. The system supports various functionalities, including:
