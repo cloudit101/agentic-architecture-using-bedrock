@@ -5,7 +5,15 @@ import logging
 import boto3
 import uuid
 import time
+from datetime import datetime
 from botocore.exceptions import ConnectTimeoutError, BotoCoreError, ClientError
+
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            print(f"Encoding datetime: {obj.isoformat()}")
+            return obj.isoformat()
+        return super().default(obj)
 
 # Configure logging
 logger = logging.getLogger()
@@ -108,7 +116,7 @@ def lambda_handler(event, context):
             
             response_body = {
                 'TEXT': {
-                    'body': json.dumps(result)
+                    'body': json.dumps(result, cls=DateTimeEncoder)
                 }
             }
             
