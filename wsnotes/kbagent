@@ -1,0 +1,68 @@
+KB-Agent
+In this section, you will create a Bedrock Agent named KB-Agent that serves as a virtual assistant for the pet store. The agent will use a knowledge base to answer questions about store operations and policies.
+
+Instructions
+Navigate to the Bedrock Agents Page:
+
+Go to the Amazon Bedrock Agents page .
+Click the Create Agent button to start the configuration process.
+Provide Name and optional Description for the Agent
+
+For Name, enter a unique name: KB-Agent
+For Description, enter:
+1
+This agent has knowledge about the store operations and policies by accessing the Q&A knowledge base to assist customers and employees with their inquiries.
+
+Click Create to proceed, this will take you to the Agent details page.
+Agent details
+
+Under Agent resource role, select Use an existing service role
+
+Choose AmazonBedrockExecutionRoleForAgents from the dropdown.
+
+Click Select Model and choose Claude 3.5 Haiku from the pop up page and click Apply.
+
+For Instructions for the Agent:
+
+1
+2
+3
+You are an office assistant in a pet store. You are friendly and polite.
+You help with queries related to pet store operations. Use the knowledge base from pet store to provide accurate,
+policy-compliant answers to employee and customer questions.
+
+Click Save button from the top right of the page to save the agent.
+Important
+Make sure you save the agent before proceed to the next step
+
+Click Add in the Knowledge bases section
+Choose knowledge-base-qa for Select knowledge base
+Knowledge base instructions for Agent:
+1
+This knowledge base contains the store operations and policies
+
+Click Add to proceed
+
+Click Save button again from the top right of the page to save the agent.
+
+Click Prepare button on the top right of the page to prepare the agent.
+
+Important
+Make sure you Prepare the agent after each edit
+
+Test the Agent
+
+Click Test in the top navigation
+Try sample questions like:
+1
+What is the address of Octank Pet Store?
+
+1
+What are the store hours for Octank Pet Store?
+
+1
+What is Pet Store's return policy?
+
+Click Run button
+You can find more questions from the Pet_Store_QnA_data.csv file from the s3 kb bucket.
+Congratulations! You have successfully created your first Bedrock agent, added a knowledge base, and tested it. Now, let's move on to creating the Rest-API-Agent.
