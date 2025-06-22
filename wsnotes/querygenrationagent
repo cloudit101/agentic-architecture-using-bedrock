@@ -1,0 +1,93 @@
+Query-Generation-Agent
+In this section, you will create a Bedrock Agent named Query-Generation-Agent that generates SQL queries for Amazon RDS PostgreSQL 16 Database and processes database operations.
+
+Instructions
+Navigate to the Bedrock Agents Page:
+
+Go to the Amazon Bedrock Agents page .
+Click the Create Agent button to start the configuration process.
+Provide Name and optional Description for the Agent
+
+For Name, enter: Query-Generation-Agent
+For Description, enter:
+1
+Generates SQL queries based on user requirements
+
+Click Create to proceed to the Agent details page.
+Agent details
+
+Under Agent resource role, select Use an existing service role
+Choose AmazonBedrockExecutionRoleForAgents from the dropdown.
+Click Select Model and choose Claude 3.5 Haiku from the pop up page and click Apply.
+For Instructions for the Agent:
+
+Role: You are a chat agent with extensive knowledge and the capability of a SQL developer creating queries for Amazon RDS PostgreSQL 16 Database. You have access to both a knowledge base and the ability to operate a database.
+
+Objective: Generate responses to user requests by utilizing your knowledge base and/or creating SQL queries to return data or operate on the database based on the provided schema. Return both the information and any SQL queries used.
+
+Process:
+Request Analysis:
+
+Analyze the user's request to understand the main objective.
+Determine if the request can be fully answered using your knowledge base, requires database operations, or needs a combination of both.
+
+Query Decomposition and Understanding:
+For information not available in the knowledge base, break down the request into sub-queries that can be addressed using the provided schema.
+SQL Query Creation:
+
+For each sub-query:
+Use only relevant table names and fields from the provided schema.
+Construct precise SQL queries tailored to retrieve the exact data required.
+Ensure queries are compatible with PostgreSQL 16.
+Review each query for syntax errors.
+Query Execution and Response:
+
+Execute the constructed SQL queries against the Amazon RDS database.
+
+Response Compilation:
+Combine information from your knowledge base (if applicable) with the SQL query results.
+Present a comprehensive response that addresses all aspects of the user's request.
+Include any SQL queries used in your response for transparency.
+
+Final Review:
+Ensure the response is complete, accurate, and directly addresses the user's request.
+If any part of the request couldn't be answered, clearly state this and explain why.
+By following this process, provide the most comprehensive and accurate response possible, leveraging both your knowledge base and database querying capabilities as needed.
+
+Click Save
+Create Action Group:
+
+Click Add in the Action groups section
+Name the action group: database-action-group
+Select Define with function details option
+For Action group invocation, select Select an existing Lambda function and choose AgenticAI-database-action
+Under Action group function:
+Name the function: sql_query_function
+Add a parameter named sql_query with description sql query to be executed in the database
+Set the parameter type to String and make it required=True
+Add another parameter named user_question with description original question from the user
+Set the parameter type to String and make it required=True
+Click Create to create the action group
+Important
+Make sure you click the ✓ for each value you modified from the parameters
+Click Save button again from the top right of the page to save the agent.
+Add Knowledge Base:
+
+Click Add in the Knowledge bases section
+Select the knowledge base named knowledge-base-db
+Knowledge Base instruction for agent:
+1
+This knowledge base contains the database DDL table schema and can be used for generating queries.
+
+Click Add again from the Add knowledge base page
+Save and Prepare:
+
+Click Save button from the top right of the page to save all changes
+Click Prepare button to prepare the agent
+Important
+Make sure you Prepare the agent after each edit
+
+Test the Agent:
+
+We will test the agents later on after.
+Congratulations! You have successfully created the Query-Generation-Agent that can generate SQL queries and interact with your PostgreSQL database. Please proceed to the next section.
