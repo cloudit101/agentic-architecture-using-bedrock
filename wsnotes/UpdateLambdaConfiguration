@@ -1,0 +1,122 @@
+Update Lambda Configuration
+In this section, you'll configure the Lambda functions to work with the Bedrock Agents by updating their environment variables with the correct agent IDs. This setup is crucial for the orchestrator agent to properly route requests to the appropriate specialized agents. An AWS Lambda environment variable is a key-value pair (like a label and its associated value) that is used to store information that the Lambda function can access while running.
+
+Key: This is like a "name" or "label" for the variable. For example, API_KEY or DB_HOST.
+Value: This is the information or data associated with that key. For example, 12345 (for API_KEY) or localhost (for DB_HOST).
+Instructions
+You can execute the following fommands from the EC2 Instance connect window:
+
+Get Bedrock Agent IDs
+Retrieve the agent IDs for each specialized agent:
+
+
+# List all agents and store their IDs
+export AGENTS=$(aws bedrock-agent list-agents --output json)
+echo $AGENTS
+
+# Get individual agent IDs
+export QUERY_GEN_AGENT=$(echo $AGENTS | jq -r '.agentSummaries[] | select(.agentName == "Query-Generation-Agent").agentId')
+echo "QUERY_GEN_AGENT: $QUERY_GEN_AGENT"
+
+export QUERY_CORRECTION_AGENT=$(echo $AGENTS | jq -r '.agentSummaries[] | select(.agentName == "Query-Correction-Agent").agentId')
+echo "QUERY_CORRECTION_AGENT: $QUERY_CORRECTION_AGENT"
+
+export REST_API_AGENT=$(echo $AGENTS | jq -r '.agentSummaries[] | select(.agentName == "Rest-API-Agent").agentId')
+echo "REST_API_AGENT: $REST_API_AGENT"
+
+export KB_AGENT=$(echo $AGENTS | jq -r '.agentSummaries[] | select(.agentName == "KB-Agent").agentId')
+echo "KB_AGENT: $KB_AGENT"
+
+export ORCHESTRATOR_AGENT=$(echo $AGENTS | jq -r '.agentSummaries[] | select(.agentName == "Orchestrator-Agent").agentId')
+echo "ORCHESTRATOR_AGENT: $ORCHESTRATOR_AGENT"
+
+
+Get Lambda Function ARNs
+Run the following commands to get the necessary Lambda ARNs:
+
+
+# Get the stack information
+export STACK_DETAILS=$(aws cloudformation describe-stacks --query "Stacks[*]" --output json | jq -r '.[] | select(.Description == "Agentic AI with Bedrock Agents workshop")')
+export STACK_NAME=$(echo "$STACK_DETAILS" | jq -r '.StackName')
+
+# Get Lambda ARNs
+export DATABASE_ACTION_ARN=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
+--query "Stacks[0].Outputs[?OutputKey=='DatabaseActionLambdaArn'].OutputValue" --output text)
+echo "DATABASE_ACTION_ARN: $DATABASE_ACTION_ARN"
+
+export ORCHESTRATOR_KB_ARN=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
+--query "Stacks[0].Outputs[?OutputKey=='OrchestratorKBActionLambdaArn'].OutputValue" --output text)
+echo "ORCHESTRATOR_KB_ARN: $ORCHESTRATOR_KB_ARN"
+
+export ORCHESTRATOR_API_ARN=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
+--query "Stacks[0].Outputs[?OutputKey=='OrchestratorAPIActionLambdaArn'].OutputValue" --output text)
+echo "ORCHESTRATOR_API_ARN: $ORCHESTRATOR_API_ARN"
+
+export ORCHESTRATOR_DB_ARN=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
+--query "Stacks[0].Outputs[?OutputKey=='OrchestratorDBActionLambdaArn'].OutputValue" --output text)
+echo "ORCHESTRATOR_DB_ARN: $ORCHESTRATOR_DB_ARN"
+
+export REST_API_ARN=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
+--query "Stacks[0].Outputs[?OutputKey=='RestAPIActionLambdaArn'].OutputValue" --output text)
+echo "REST_API_ARN: $REST_API_ARN"
+
+
+Update Lambda Environment Variables
+Configure each Lambda function with its corresponding agent ID:
+
+
+# Update Database Action Lambda - QUERY_CORRECTION_AGENT_ID only
+DB_ACTION_ENV=$(aws lambda get-function-configuration --function-name $DATABASE_ACTION_ARN --query 'Environment.Variables' --output json)
+DB_ACTION_ENV_UPDATED=$(echo $DB_ACTION_ENV | jq --arg new_val "$QUERY_CORRECTION_AGENT" '. + {"QUERY_CORRECTION_AGENT_ID": $new_val}')
+aws lambda update-function-configuration \
+--function-name $DATABASE_ACTION_ARN \
+--environment "{\"Variables\": $DB_ACTION_ENV_UPDATED}" > /dev/null
+
+
+# Update Orchestrator KB Action Lambda - AGENT_ID only
+KB_ACTION_ENV=$(aws lambda get-function-configuration --function-name $ORCHESTRATOR_KB_ARN --query 'Environment.Variables' --output json)
+KB_ACTION_ENV_UPDATED=$(echo $KB_ACTION_ENV | jq --arg new_val "$KB_AGENT" '.AGENT_ID = $new_val')
+aws lambda update-function-configuration \
+--function-name $ORCHESTRATOR_KB_ARN \
+--environment "{\"Variables\": $KB_ACTION_ENV_UPDATED}" > /dev/null
+
+# Update Orchestrator API Action Lambda - AGENT_ID only
+API_ACTION_ENV=$(aws lambda get-function-configuration --function-name $ORCHESTRATOR_API_ARN --query 'Environment.Variables' --output json)
+API_ACTION_ENV_UPDATED=$(echo $API_ACTION_ENV | jq --arg new_val "$REST_API_AGENT" '. + {"AGENT_ID": $new_val}')
+aws lambda update-function-configuration \
+--function-name $ORCHESTRATOR_API_ARN \
+--environment "{\"Variables\": $API_ACTION_ENV_UPDATED}" > /dev/null
+
+# Update Orchestrator DB Action Lambda - AGENT_ID only
+DB_ORCH_ENV=$(aws lambda get-function-configuration --function-name $ORCHESTRATOR_DB_ARN --query 'Environment.Variables' --output json)
+DB_ORCH_ENV_UPDATED=$(echo $DB_ORCH_ENV | jq --arg new_val "$QUERY_GEN_AGENT" '.AGENT_ID = $new_val')
+aws lambda update-function-configuration \
+--function-name $ORCHESTRATOR_DB_ARN \
+--environment "{\"Variables\": $DB_ORCH_ENV_UPDATED}" > /dev/null
+
+
+Verify Configuration
+Confirm the environment variables are set correctly for each Lambda function:
+
+1
+2
+3
+4
+5
+6
+# Check environment variables for each Lambda
+for ARN in $DATABASE_ACTION_ARN $ORCHESTRATOR_KB_ARN $ORCHESTRATOR_API_ARN $ORCHESTRATOR_DB_ARN $REST_API_ARN
+do
+  echo "Checking configuration for Lambda: $ARN"
+  aws lambda get-function-configuration --function-name $ARN --query 'Environment.Variables'
+done
+
+
+Troubleshooting
+If any errors occur during the update:
+
+Verify that all agent IDs were retrieved successfully
+Ensure you have the necessary permissions to update Lambda functions
+Check that the Lambda ARNs were correctly exported from CloudFormation
+Verify that the Bedrock agents are properly deployed and active
+After completing these steps, your Lambda functions will be properly configured to work with their respective Bedrock agents, enabling the orchestration of queries and actions across the system.
