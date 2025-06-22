@@ -1,0 +1,58 @@
+Invoking the Agents
+In this section, you will test the Orchestrator-Agent and observe how it intelligently routes different types of queries to specialized agents through the AWS Bedrock Console.
+
+Instructions
+Navigate to the Agent Testing Interface:
+
+Go to the Amazon Bedrock Agents page 
+Locate and select "Orchestrator-Agent"
+Click the Test button to launch the testing interface
+Test Store Operations Queries:
+
+Enter the following sample questions:
+1
+What is the address of Octank Pet Store?
+
+1
+What are the store hours for Octank Pet Store?
+
+1
+What is Pet Store's return policy?
+
+Observe how the Orchestrator-Agent routes these queries to the KB-Agent
+Verify that responses come from the knowledge base documents
+Test Breed Information Requests:
+
+Try queries about dog breeds:
+1
+List top 20 dog breeds available
+
+1
+Tell me about the characteristics of Golden Retrievers
+
+Watch how the Orchestrator-Agent:
+Identifies this as a breed information request
+Routes to the Rest-API-Agent
+Returns detailed breed information
+Test Inventory Queries:
+
+Submit inventory-related questions:
+1
+Could you show me what pets we have and what types of animals they are?
+
+1
+Could you display all the pet categories?
+
+Observe the process as the Orchestrator-Agent:
+Routes to the Query-Generation-Agent
+Converts the request to SQL
+Returns current inventory data
+Analyze Agent Responses:
+
+For each query, examine:
+Which specialized agent was selected
+The reasoning behind the routing decision
+Processing steps taken
+Notes
+When testing the agent system, start with simple, clear questions and gradually increase complexity. Pay attention to the Orchestrator-Agent's explanations of its routing decisions, which will help you understand the system's decision-making process. For detailed information about agent testing, consult the Amazon Bedrock Agents documentation .
+
