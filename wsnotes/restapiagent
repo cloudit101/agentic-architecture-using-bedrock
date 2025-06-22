@@ -1,0 +1,129 @@
+Rest-API-Agent
+In this section, you will create a Bedrock Agent named Rest-API-Agent that manages external API communications and processes API responses for dog breed information, you can read more about the API from the following page: https://dog.ceo/dog-api/documentation/ 
+
+Instructions
+Navigate to the Bedrock Agents Page:
+
+Go to the Amazon Bedrock Agents page .
+Click the Create Agent button to start the configuration process.
+Provide Name and optional Description for the Agent
+
+For Name, enter: Rest-API-Agent
+For Description, enter:
+1
+Manages external API communications, dog breeds, processes API responses
+
+Click Create to proceed, this will take you to the Agent details page.
+Agent details
+
+Under Agent resource role, select Use an existing service role
+Choose AmazonBedrockExecutionRoleForAgents from the dropdown.
+Click Select Model and choose Claude 3.5 Haiku from the pop up page and click Apply.
+For Instructions for the Agent:
+1
+2
+3
+You are an automated agent with comprehensive knowledge of RESTful APIs and the capability to interact with them seamlessly. 
+You can analyze user requests, map them to appropriate API endpoints, construct necessary parameters, invoke the APIs, 
+and process the responses to deliver accurate and relevant information.
+
+Click Save
+Create Action Group:
+
+Click Add in the Action groups section
+Name the action group: action-group-rest-api
+Select Define via in-line schema editor option
+Select Select an existing Lambda function from Action group invocation, and then choose AgenticAI-rest-api-action from the dropdown.
+Action group schema, choose Define via in-line schema editor
+Enter the following OpenAPI schema:
+
+openapi: 3.0.0
+info:
+  title: Dog API
+  description: A public API providing a list of all dog breeds.
+  version: 1.0.0
+servers:
+  - url: https://dog.ceo/api
+    description: Dog CEO API Server
+paths:
+  /breeds/list/all:
+    get:
+      description: A public API providing a list of all dog breeds.
+      summary: Get a list of all dog breeds
+      operationId: getAllBreeds
+      tags:
+        - Breeds
+      responses:
+        '200':
+          description: A list of all breeds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+                    description: A key-value list of breeds and their sub-breeds (if any).
+                  status:
+                    type: string
+                    description: The status of the response (should be "success").
+              example:
+                message:
+                  affenpinscher: []
+                  african: []
+                  airedale: []
+                  akita: []
+                  beagle: []
+                  retriever:
+                    - golden
+                    - labrador
+                status: success
+        '500':
+          description: Server error
+components:
+  schemas:
+    BreedListResponse:
+      type: object
+      properties:
+        message:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          description: A list of breeds and sub-breeds
+        status:
+          type: string
+          description: The status of the response
+      example:
+        message:
+          affenpinscher: []
+          african: []
+          airedale: []
+          akita: []
+        status: success
+tags:
+  - name: Breeds
+    description: Operations related to dog breeds
+
+Click Create
+Save and Prepare:
+
+Click Save button again from the top right of the page to save the agent.
+Click Prepare button on the top right of the page to prepare the agent.
+Important
+Make sure you Prepare the agent after each edit
+
+Test the Agent:
+
+Click Test in the top navigation
+Try sample questions like:
+1
+Can you get me a list of top 10 dog breeds?
+
+Click Run to test the agent's responses
+Congratulations! You have successfully created the Rest-API-Agent that can interact with external APIs and process responses about dog breeds. Please proceed to the next section.
