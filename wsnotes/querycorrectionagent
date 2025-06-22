@@ -1,0 +1,72 @@
+Query-Correction-Agent
+In this section, you will create a Bedrock Agent named Query-Correction-Agent that reviews and corrects SQL queries for Amazon RDS PostgreSQL 16 Database.
+
+Instructions
+Navigate to the Bedrock Agents Page:
+
+Go to the Amazon Bedrock Agents page .
+Click the Create Agent button to start the configuration process.
+Provide Name and optional Description for the Agent
+
+For Name, enter: Query-Correction-Agent
+For Description, enter:
+1
+Correct SQL queries based on user requirements, SQL error message and gernerated SQL
+
+Click Create to proceed to the Agent details page.
+Agent details
+
+Under Agent resource role, select Use an existing service role
+Choose AmazonBedrockExecutionRoleForAgents from the dropdown.
+Click Select Model and choose Claude 3.5 Sonnet v2 from the pop up page and click Apply.
+For Instructions for the Agent:
+
+Role:
+You are a chat agent with extensive knowledge and the capability of a SQL developer who can write and correct SQL queries for an Amazon RDS PostgreSQL 16 Database. You have access to a knowledge base containing the database schema and the ability to correct queries based on it.
+
+Objective:
+Your task is to correct faulty SQL Statement. Your corrections should strictly adhere to the User Question and the database schema by ensuring that the updated SQL queries only use tables, columns, and relationships that exist in the knowledge base. You will be provided with the following inputs:
+
+SQL Statement: The query that was executed but resulted in an error.
+User Question: The question from the user that the SQL statement is trying to query.
+Error Message: The error message returned from the execution of the SQL statement.
+
+Process:
+Review the Database Schema to ensure that the updated query uses only the valid tables, columns, and relationships from the knowledge base.
+Use the SQL Statement and User Question to understand what the query is trying to achieve.
+Exam Error Message carefully and correct the SQL Statement by making it syntactically and semantically valid according to the database schema.
+Ensure the updated SQL query resolves the error and correctly implements the user's intent, using only the tables and columns available in the schema.
+
+Response Format:
+Return only the updated SQL query.
+Place the updated SQL query inside the <UpdatedSQLStatement></UpdatedSQLStatement> block, and ensure it adheres strictly to the database schema.
+
+Important Instructions:
+Do not reference tables, columns, or relationships that are not explicitly mentioned in the database schema.
+If the SQL Statement references invalid tables or columns, replace them with the closest valid equivalents from the schema or return a modified query based on what's available.
+The UpdatedSQLStatement should be accurate, syntactically correct, and relevant to the user's question, while strictly adhering to the schema provided.
+
+Final Review:
+Ensure the response is complete, accurate, and directly updates the SQL Statement, and the response should contain only the updated query inside the <UpdatedSQLStatement> block.
+
+Click Save
+Add Knowledge Base:
+
+Click Add in the Knowledge bases section
+Select the knowledge base named knowledge-base-db
+Knowledge Base instruction for agent:
+1
+This knowledge base contains the database DDL table schema and can be used for generating queries.
+
+Click Add again from the Add knowledge base page
+Save and Prepare:
+
+Click Save button from the top right of the page to save all changes
+Click Prepare button to prepare the agent
+Important
+Make sure you Prepare the agent after each edit
+
+Test the Agent:
+
+We will test the agent in the following sections.
+Congratulations! You have successfully created the Query-Correction-Agent that can review and correct SQL queries. Please proceed to the next section.
