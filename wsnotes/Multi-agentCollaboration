@@ -1,0 +1,116 @@
+Multi-agent Collaboration
+In this section, you will create a Bedrock Agent named Multi-Agent-Supervisor that will route user requests to specialized agents and coordinate their responses. With multi-agent collaboration, you can build, deploy, and manage multiple AI agents working together on complex multi-step tasks that require specialized skills. When you need more than a single agent to handle a complex task, you can create additional specialized agents to address different aspects of the process. For more info, refer (https://aws.amazon.com/blogs/aws/introducing-multi-agent-collaboration-capability-for-amazon-bedrock/ )
+
+Instructions
+Navigate to the Bedrock Agents Page:
+
+Go to the Amazon Bedrock Agents page .
+For Multi-Agent Colloboration, we would need Agent Alias to be created for all our individual agents.
+Go to KB-Agent, And Click on Create Alias button.
+Enter Alias Name enter: dev
+Leave the Default Associate a version and Select throughput Screenshot
+Repeat the steps for Agent Name "Rest-API-Agent" and "Query-Generation-Agent**
+Provide Name and optional Description for the Agent
+
+For Name, enter: Multi-Agent-Supervisor
+For Description, enter:
+1
+Supervisor Agent to route user requests to specialized agents and coordinates responses
+
+Enable checkbox for Enable multi-agent collboration Screenshot
+Click Create to proceed to the Agent details page.
+Agent details
+
+Under Agent resource role, select Use an existing service role
+Choose AmazonBedrockExecutionRoleForAgents from the dropdown.
+Click Select Model and choose Claude 3.5 Haiku from the pop up page and click Apply.
+For Instructions for the Agent:
+
+Role: You are a helpful and polite supervisor agent responsible for routing user requests to specialized agents powered by a large language model. You have a high-level understanding of the capabilities of each agent and are responsible for directing user inquiries to the most appropriate agent based on the nature of the request.
+
+Objective: Analyze and categorize user requests, identifying the specific type of expertise required (e.g., database operations, rest api integration, knowledge retrieval). Route each request to the appropriate specialized agent (e.g., database Agent, kb agent, rest api Agent, etc.) to ensure the user's needs are met with precision.
+
+Process: Request Analysis: Review the user's request to determine the primary intent and required expertise. Agent Selection: Match the request to the agent that is best equipped to handle it, based on the agent's capabilities (e.g., database agent can work with pet, pets, tags, category, categories, user, users, order, address, customer. kb agents can work with knowledge retrieval on store policies, API interaction agent can work with api operations on breed or breeds).
+
+Request Routing: Forward the request along with any relevant context to the chosen agent, ensuring that the specialized agent receives all necessary details. Monitoring and Escalation: Monitor the response from the chosen agent. If the agent cannot fully satisfy the request or if it falls outside its scope, escalate the request or re-route it to a different agent for further assistance.
+
+Response Compilation: Ensure that responses from agents are aggregated, if necessary, and presented to the user in a polite, coherent and comprehensive manner. By following this process, provide efficient and accurate routing of user requests to the appropriate agent, optimizing response quality and relevance.
+
+Under Additional settings:
+Set Code Interpreter to Disabled
+Set User Input to Enabled
+Leave KMS key selection at default
+Set Idle session timeout to 600 seconds
+Click Save
+Configure Multi-agent collboration:
+
+Scroll down the Agent Builder page and Click edit on the Multi-agent colloboration section Screenshot
+Under the Colloboration configuration, we would have the option Supervisor selected.
+Supervisor option will allow supervisor agent coordinate a final response from the agent.
+Supervisor with routing routes information to the appropriate collaborator agent, which outputs a final response.
+Under the Agent collaborator, we would have the option of Adding the Colloborator Agent from the drop down and Agent Alias for the agent.
+a. First collaborator agent - Knowledge Base:
+
+Add the KB-Agent under Colloborator agent drop-down and the alias dev under **Agent alias" drop-down.
+For Colloborator name, enter: invoke-kb-agent
+For Colloborator instruction, enter : This agent uses knowledgebase to help with queries related to pet store operations.
+Click Add Colloborator
+b. Second collaborator agent - API Integration:
+
+Add the Rest-API-Agent under Colloborator agent drop-down and the alias dev under **Agent alias" drop-down.
+For Colloborator name, enter: invoke-api-agent
+For Colloborator instruction, enter : This agent invokes a public restful API providing a list of all dog breeds.
+Click Add Colloborator
+c. Third collaborator agent - Database Operations:
+
+Add the Query-Generation-Agent under Colloborator agent drop-down and the alias dev under **Agent alias" drop-down.
+For Colloborator name, enter: invoke-db-agent
+For Colloborator instruction, enter : This agent can take user query and generate Text-to-SQL query conversion for database interaction.
+Click Save button from the top right of the page to save all changes
+Save and Prepare:
+
+Click Save button from the top right of the page to save all changes
+Click Prepare button to prepare the agent
+Test the Agent:
+
+Click the Test button to launch the testing interface.
+Test Store Operations Queries:
+
+Enter the following sample questions:
+1
+What is the address of Octank Pet Store?
+
+1
+What are the store hours for Octank Pet Store?
+
+1
+What is Pet Store's return policy?
+
+Click on "Show trace" hyperlink.
+Observe Multi-agent collaboration trace timeline how the Multi-Agent-Supervisor routes these queries to the KB-Agent
+Verify that responses come from the knowledge base documents Screenshot
+Test Breed Information Requests:
+
+Try queries about dog breeds:
+1
+List top 20 dog breeds available
+
+1
+Tell me about the characteristics of Golden Retrievers
+
+Click on "Show trace" hyperlink.
+Observe Multi-agent collaboration trace timeline how the Multi-Agent-Supervisor routes these queries to the Rest-API-Agent
+Verify that responses come from the knowledge base documents
+Submit inventory-related questions:
+
+1
+Could you show me what pets we have and what types of animals they are?
+
+1
+Could you display all the pet categories?
+
+Click on "Show trace" hyperlink.
+Observe Multi-agent collaboration trace timeline how the Multi-Agent-Supervisor routes these queries to the Query-Generation-Agent
+Verify that responses come from the knowledge base documents
+Congratulations! You have successfully created the Multi-Agent Supervisor Agent that can route and coordinate requests between specialized agents. Please proceed to the next section.
+
