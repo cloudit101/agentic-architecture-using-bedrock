@@ -1,0 +1,74 @@
+Running the GUI
+In this section, you will set up and launch a Streamlit-based graphical user interface (GUI) to interact with the agent system. The GUI provides a user-friendly way to communicate with your Bedrock Agents.
+
+Instructions
+Clone the Source Code:
+
+Connect to your Bastion Host
+Clone the repository using:
+
+git clone https://github.com/aws-samples/agentic-architecture-using-bedrock.git
+cd agentic-architecture-using-bedrock
+
+Update Agent Configuration:
+
+Install/update python dependencies:
+
+sudo yum install python3-pip -y
+pip install boto3 streamlit
+
+Navigate to the configuration directory:
+1
+nano application/streamlit/agents.py
+
+Locate the agentId variable
+Replace the value with your Orchestrator Agent's ID:
+1
+agentId = "XXXXXXXXXXXXXXXXXX"  # Replace with your Orchestrator Agent ID
+
+Save changes:
+Press CTRL + X
+Press Y to confirm
+Press Enter to save
+Launch the Application:
+
+Grant python executable permission to run on port 80
+1
+2
+realpath /usr/local/bin/python3.12
+sudo setcap 'cap_net_bind_service=+ep' /usr/local/bin/python3.12
+
+Start the Streamlit application:
+1
+ streamlit run ./application/streamlit/agents.py --server.port=80
+
+Access the GUI:
+
+Locate and copy the External URL: value from the EC2 console
+Open a new browser tab
+Paste the URL into the address bar and press Enter
+Now you can interact with the Octank Pet Store Orchestrator Agent
+Sample questions:
+1
+What are the store hours?
+
+1
+Does the store offer online shopping?
+
+1
+Does the store provide pet training classes?
+
+1
+List top 10 dog breeds
+
+1
+Could you show me what pets we have and what types of animals they are?
+
+1
+Could you show me all customers?
+
+1
+Could you show me what did john_doe ordered?
+
+Notes
+The GUI provides an intuitive interface for interacting with your agent system. Ensure all configuration settings are correct before launching the application. For troubleshooting or additional information, refer to the project documentation  or the Streamlit documentation .
