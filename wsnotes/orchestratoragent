@@ -1,0 +1,93 @@
+Orchestrator-Agent
+In this section, you will create a Bedrock Agent named Orchestrator-Agent that will route user requests to specialized agents and coordinate their responses.
+
+Instructions
+Navigate to the Bedrock Agents Page:
+
+Go to the Amazon Bedrock Agents page .
+Click the Create Agent button to start the configuration process.
+Provide Name and optional Description for the Agent
+
+For Name, enter: Orchestrator-Agent
+For Description, enter:
+1
+Routes user requests to specialized agents and coordinates responses
+
+Click Create to proceed to the Agent details page.
+Agent details
+
+Under Agent resource role, select Use an existing service role
+Choose AmazonBedrockExecutionRoleForAgents from the dropdown.
+Click Select Model and choose Claude 3.5 Haiku from the pop up page and click Apply.
+For Instructions for the Agent:
+1
+2
+3
+4
+5
+6
+7
+8
+9
+Role: You are a helpful and polite supervisor agent responsible for routing user requests to specialized agents powered by a large language model. You have a high-level understanding of the capabilities of each agent and are responsible for directing user inquiries to the most appropriate agent based on the nature of the request.
+
+Objective: Analyze and categorize user requests, identifying the specific type of expertise required (e.g., database operations, rest api integration, knowledge retrieval). Route each request to the appropriate specialized agent (e.g., database Agent, kb agent, rest api Agent, etc.) to ensure the user's needs are met with precision.
+
+Process: Request Analysis: Review the user's request to determine the primary intent and required expertise. Agent Selection: Match the request to the agent that is best equipped to handle it, based on the agent's capabilities (e.g., database agent can work with pet, pets, tags, category, categories, user, users, order, address, customer. kb agents can work with knowledge retrieval on store policies, API interaction agent can work with api operations on breed or breeds).
+
+Request Routing: Forward the request along with any relevant context to the chosen agent, ensuring that the specialized agent receives all necessary details. Monitoring and Escalation: Monitor the response from the chosen agent. If the agent cannot fully satisfy the request or if it falls outside its scope, escalate the request or re-route it to a different agent for further assistance.
+
+Response Compilation: Ensure that responses from agents are aggregated, if necessary, and presented to the user in a polite, coherent and comprehensive manner. By following this process, provide efficient and accurate routing of user requests to the appropriate agent, optimizing response quality and relevance.
+
+Under Additional settings:
+Set Code Interpreter to Disabled
+Set User Input to Enabled
+Leave KMS key selection at default
+Set Idle session timeout to 600 seconds
+Click Save
+Create Action Groups: Create three action groups for different functionalities:
+
+Important
+Make sure you click the ✓ for each value you modified from the parameters
+a. First Action Group - API Integration:
+
+Click Add in the Action groups section
+Name: invoke-api-agent
+Description: Invoke a public restful API providing a list of all dog breeds.
+Select Define with function details option
+Select existing Lambda function: AgenticAI-orchestrator-api-action
+Function name: rest-api-agent
+Add parameter named input_text with description original input from the user
+Set the parameter type to String and make it required=True
+Click Create
+b. Second Action Group - Database Operations:
+
+Click Add again
+Name: invoke-db-agent
+Description: This agent can take user query and generate Text-to-SQL query conversion for database interaction.
+Select Define with function details option
+Select existing Lambda function: AgenticAI-orchestrator-db-action
+Function name: invoke-db-agent
+Add parameter named input_text with description original input from the user
+Set the parameter type to String and make it required=True
+Click Create
+c. Third Action Group - Knowledge Base:
+
+Click Add again
+Name: invoke-kb-agent
+Description: This action group help with queries related to pet store operations.
+Select Define with function details option
+Select existing Lambda function: AgenticAI-orchestrator-kb-action
+Function name: invoke-kb-agent
+Add parameter named input_text with description original input from the user
+Set the parameter type to String and make it required=True
+Click Create
+Click Save button from the top right of the page to save all changes
+Save and Prepare:
+
+Click Save button from the top right of the page to save all changes
+Click Prepare button to prepare the agent
+Test the Agent:
+
+We will test the agent's capabilities in the next section.
+Congratulations! You have successfully created the Orchestrator-Agent that can route and coordinate requests between specialized agents. Please proceed to the next section.
